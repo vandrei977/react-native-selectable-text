@@ -25,7 +25,7 @@
     RCTUITextView *_backedTextInputView;
 }
 
-NSString *const CUSTOM_SELECTOR = @"_CUSTOM_SELECTOR_";
+NSString *const RNST_CUSTOM_SELECTOR = @"_CUSTOM_SELECTOR_";
 
 UITextPosition *selectionStart;
 UITextPosition* beginning;
@@ -98,7 +98,7 @@ UITextPosition* beginning;
     NSMutableArray *menuControllerItems = [NSMutableArray arrayWithCapacity:self.menuItems.count];
     
     for(NSString *menuItemName in self.menuItems) {
-        NSString *sel = [NSString stringWithFormat:@"%@%@", CUSTOM_SELECTOR, menuItemName];
+        NSString *sel = [NSString stringWithFormat:@"%@%@", RNST_CUSTOM_SELECTOR, menuItemName];
         UIMenuItem *item = [[UIMenuItem alloc] initWithTitle: menuItemName
                                                       action: NSSelectorFromString(sel)];
         
@@ -106,7 +106,18 @@ UITextPosition* beginning;
     }
     
     menuController.menuItems = menuControllerItems;
-    [menuController setTargetRect:self.bounds inView:self];
+
+
+    UITextRange *selectionRange = [_backedTextInputView selectedTextRange];
+    NSArray *selectionRects = [_backedTextInputView selectionRectsForRange:selectionRange];
+    CGRect completeRect = CGRectNull;
+    for (UITextSelectionRect *selectionRect in selectionRects) {
+    if (CGRectIsNull(completeRect)) {
+        completeRect = selectionRect.rect;
+    } else completeRect = CGRectUnion(completeRect,selectionRect.rect);
+}
+
+    [menuController setTargetRect:completeRect inView:self];
     [menuController setMenuVisible:YES animated:YES];
 }
 
@@ -156,16 +167,17 @@ UITextPosition* beginning;
         default:
             break;
     }
-    
     UITextPosition *selectionEnd = word.end;
+    
 
     const NSInteger location = [_backedTextInputView offsetFromPosition:beginning toPosition:selectionStart];
     const NSInteger endLocation = [_backedTextInputView offsetFromPosition:beginning toPosition:selectionEnd];
-
+    NSLog(@"location:%i endlocation:%i difference:%i", location, endLocation, endLocation - location);
     if (location == 0 && endLocation == 0) return;
 
+    
+    [_backedTextInputView setSelectedRange:NSMakeRange(location, endLocation)];
     [_backedTextInputView select:self];
-    [_backedTextInputView setSelectedRange:NSMakeRange(location, endLocation - location)];
 
 }
 
@@ -220,7 +232,7 @@ UITextPosition* beginning;
 - (void)forwardInvocation:(NSInvocation *)invocation
 {
     NSString *sel = NSStringFromSelector([invocation selector]);
-    NSRange match = [sel rangeOfString:CUSTOM_SELECTOR];
+    NSRange match = [sel rangeOfString:RNST_CUSTOM_SELECTOR];
     if (match.location == 0) {
         [self tappedMenuItem:[sel substringFromIndex:17]];
     } else {
@@ -237,7 +249,7 @@ UITextPosition* beginning;
 {
     if(selectionStart != nil) {return NO;}
     NSString *sel = NSStringFromSelector(action);
-    NSRange match = [sel rangeOfString:CUSTOM_SELECTOR];
+    NSRange match = [sel rangeOfString:RNST_CUSTOM_SELECTOR];
 
     if (match.location == 0) {
         return YES;

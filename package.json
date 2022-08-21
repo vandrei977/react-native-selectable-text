@@ -1,22 +1,26 @@
 {
-    "name": "@alentoma/react-native-selectable-text",
-    "version": "1.5.9",
-    "description": "React Native component used to provide the features of pass different context menu items and events",
-    "main": "index.ts",
-    "homepage": "https://github.com/alentoma/react-native-selectable-text",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "keywords": [
-        "react-native"
-    ],
-    "author": "Astrocoders <contact@astrocoders.com>",
-    "license": "MIT",
-    "devDependencies": {
-        "react-native": "^0.63.4"
-    },
-    "dependencies": {
-        "fast-memoize": "^2.5.1",
-        "uuid": "^3.3.2"
-    }
+  "name": "@vandrei977/react-native-selectable-text",
+  "version": "1.6.14",
+  "description": "React Native component used to provide the features of pass different context menu items and events",
+  "main": "index.ts",
+  "homepage": "https://github.com/vandrei977/react-native-selectable-text",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vandrei977/react-native-selectable-text.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "react-native"
+  ],
+  "author": "Astrocoders <contact@astrocoders.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "react-native": "^0.69.0"
+  },
+  "dependencies": {
+    "fast-memoize": "^2.5.1",
+    "uuid": "^3.3.2"
+  }
 }
