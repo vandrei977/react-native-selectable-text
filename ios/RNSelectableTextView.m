@@ -66,17 +66,12 @@ UITextPosition* beginning;
 
         [self addSubview:_backedTextInputView];
         
-        UILongPressGestureRecognizer *longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
+         UILongPressGestureRecognizer *longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
         
-        
-        UITapGestureRecognizer *tapGesture = [ [UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
-        tapGesture.numberOfTapsRequired = 2;
-        
-        UITapGestureRecognizer *singleTapGesture = [ [UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
+        UITapGestureRecognizer *singleTapGesture = [ [UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
         singleTapGesture.numberOfTapsRequired = 1;
         
-        [_backedTextInputView addGestureRecognizer:longPressGesture];
-        [_backedTextInputView addGestureRecognizer:tapGesture];
+         [_backedTextInputView addGestureRecognizer:longPressGesture];
         [_backedTextInputView addGestureRecognizer:singleTapGesture];
         
         [self setUserInteractionEnabled:YES];
@@ -172,7 +167,7 @@ UITextPosition* beginning;
 
     const NSInteger location = [_backedTextInputView offsetFromPosition:beginning toPosition:selectionStart];
     const NSInteger endLocation = [_backedTextInputView offsetFromPosition:beginning toPosition:selectionEnd];
-    NSLog(@"location:%i endlocation:%i difference:%i", location, endLocation, endLocation - location);
+    NSLog(@"location:%i endlocation:%i difference:%li", location, endLocation, endLocation - location);
     if (location == 0 && endLocation == 0) return;
 
     
@@ -183,9 +178,16 @@ UITextPosition* beginning;
 
 -(void) handleTap: (UITapGestureRecognizer *) gesture
 {
-    [_backedTextInputView select:self];
-    [_backedTextInputView selectAll:self];
-    [self _handleGesture];
+    CGPoint pos = [gesture locationInView:_backedTextInputView];
+    
+    UITextPosition *tapPos = [_backedTextInputView closestPositionToPoint:pos];
+    UITextRange *word = [_backedTextInputView.tokenizer rangeEnclosingPosition:tapPos withGranularity:(UITextGranularityWord) inDirection:UITextLayoutDirectionRight];
+    
+    NSLog(@"word:%@ pos:%@", [_backedTextInputView textInRange:word], tapPos);
+    
+    self.onWordTap(@{
+        @"word":[_backedTextInputView textInRange:word],
+    });
 }
 
 - (void)setAttributedText:(NSAttributedString *)attributedText
