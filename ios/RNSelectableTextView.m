@@ -66,12 +66,17 @@ UITextPosition* beginning;
 
         [self addSubview:_backedTextInputView];
         
-         UILongPressGestureRecognizer *longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
+        UILongPressGestureRecognizer *longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
         
-        UITapGestureRecognizer *singleTapGesture = [ [UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
+        
+        UITapGestureRecognizer *tapGesture = [ [UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
+        tapGesture.numberOfTapsRequired = 2;
+        
+        UITapGestureRecognizer *singleTapGesture = [ [UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
         singleTapGesture.numberOfTapsRequired = 1;
         
-         [_backedTextInputView addGestureRecognizer:longPressGesture];
+        [_backedTextInputView addGestureRecognizer:longPressGesture];
+        [_backedTextInputView addGestureRecognizer:tapGesture];
         [_backedTextInputView addGestureRecognizer:singleTapGesture];
         
         [self setUserInteractionEnabled:YES];
@@ -162,17 +167,16 @@ UITextPosition* beginning;
         default:
             break;
     }
-    UITextPosition *selectionEnd = word.end;
     
+    UITextPosition *selectionEnd = word.end;
 
     const NSInteger location = [_backedTextInputView offsetFromPosition:beginning toPosition:selectionStart];
     const NSInteger endLocation = [_backedTextInputView offsetFromPosition:beginning toPosition:selectionEnd];
-    NSLog(@"location:%i endlocation:%i difference:%li", location, endLocation, endLocation - location);
+
     if (location == 0 && endLocation == 0) return;
 
-    
-    [_backedTextInputView setSelectedRange:NSMakeRange(location, endLocation)];
     [_backedTextInputView select:self];
+    [_backedTextInputView setSelectedRange:NSMakeRange(location, endLocation - location)];
 
 }
 
